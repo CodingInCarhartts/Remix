@@ -82,7 +82,7 @@ jobs:
       - name: Build
         run: cargo build --release --target ${{ matrix.target }}
       - name: Upload binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cargo-mix-${{ matrix.target }}
           path: target/${{ matrix.target }}/release/cargo-mix${{ matrix.extension }}
@@ -95,7 +95,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
