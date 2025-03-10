@@ -1,0 +1,40 @@
+[package]
+name = "cargo-mix"
+version = "0.1.0"
+edition = "2021"
+authors = ["Trenton Sousa tdsousa1993@gmail.com"]
+description = "A Rust implementation of repomix - pack repositories for AI tools"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/dotZeroSlash/cargo-mix"
+keywords = ["ai", "repository", "packing", "llm"]
+
+[dependencies]
+clap = { version = "4.4", features = ["derive"] }
+glob = "0.3"
+walkdir = "2.4"
+ignore = "0.4"
+regex = "1.10"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.36", features = ["full"] }
+reqwest = { version = "0.11", features = ["json"] }
+anyhow = "1.0"
+thiserror = "1.0"
+log = "0.4"
+env_logger = "0.10"
+indicatif = "0.17"
+console = "0.15"
+tempfile = "3.9"
+git2 = "0.18"
+crossbeam = "0.8"
+rayon = "1.8"
+tree_magic_mini = "3.0"
+glob-match = "0.2"
+
+[dev-dependencies]
+tempfile = "3.9"
+test-case = "3.3"
+mockall = "0.12"
+assert_fs = "1.1"
+predicates = "3.0"
