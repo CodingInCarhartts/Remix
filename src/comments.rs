@@ -231,21 +231,65 @@ fn remove_php_comments(content: &str) -> String {
 
 /// Removes comments from HTML/XML code
 fn remove_html_comments(content: &str) -> String {
-    let mut result = String::new();
-    let mut i = 0;
+    // Use a simple state machine approach
+    let mut result = String::with_capacity(content.len());
+    let mut state = 0; // 0: normal, 1: saw '<', 2: saw '<!', 3: saw '<!-', 4: in comment
     
-    while i < content.len() {
-        if i + 3 < content.len() && &content[i..i+4] == "<!--" {
-            let comment_end = content[i+4..].find("-->");
-            if let Some(end) = comment_end {
-                i = i + 4 + end + 3;
-            } else {
-                result.push_str(&content[i..]);
-                break;
-            }
-        } else {
-            result.push(content.chars().nth(i).unwrap());
-            i += 1;
+    let mut chars = content.chars().peekable();
+    while let Some(c) = chars.next() {
+        match state {
+            0 => {
+                if c == '<' {
+                    state = 1;
+                    result.push(c);
+                } else {
+                    result.push(c);
+                }
+            },
+            1 => {
+                if c == '!' {
+                    state = 2;
+                    result.push(c);
+                } else {
+                    state = 0;
+                    result.push(c);
+                }
+            },
+            2 => {
+                if c == '-' {
+                    state = 3;
+                    result.push(c);
+                } else {
+                    state = 0;
+                    result.push(c);
+                }
+            },
+            3 => {
+                if c == '-' {
+                    // Start of comment detected
+                    state = 4;
+                    // Remove "<!--" that we've accumulated
+                    result.truncate(result.len() - 3);
+                } else {
+                    state = 0;
+                    result.push(c);
+                }
+            },
+            4 => {
+                // In comment, look for "-->"
+                if c == '-' {
+                    // Check for end of comment
+                    if chars.peek() == Some(&'-') {
+                        chars.next(); // consume second '-'
+                        if chars.peek() == Some(&'>') {
+                            chars.next(); // consume '>'
+                            state = 0;   // Back to normal
+                        }
+                    }
+                }
+                // Don't add anything to result while in comment
+            },
+            _ => unreachable!()
         }
     }
     
