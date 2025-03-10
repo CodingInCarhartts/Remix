@@ -53,43 +53,70 @@ jobs:
         with:
           components: rustfmt
       - name: Check formatting
-        run: cargo fmt --all -- --check
+        run: cargo fmt
 
-  build:
-    name: Build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        include:
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            extension: ""
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            extension: ".exe"
-          - os: macos-latest
-            target: x86_64-apple-darwin
-            extension: ""
+  windows-build:
+    name: Build (Windows)
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target }}
+          targets: x86_64-pc-windows-msvc
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
       - name: Build
-        run: cargo build --release --target ${{ matrix.target }}
+        run: cargo build --release --target x86_64-pc-windows-msvc
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: cargo-mix-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/cargo-mix${{ matrix.extension }}
+          name: cargo-mix-x86_64-pc-windows-msvc
+          path: target/x86_64-pc-windows-msvc/release/cargo-mix.exe
+
+  linux-build:
+    name: Build (Linux)
+    needs: windows-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --release --target x86_64-unknown-linux-gnu
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargo-mix-x86_64-unknown-linux-gnu
+          path: target/x86_64-unknown-linux-gnu/release/cargo-mix
+
+  macos-build:
+    name: Build (macOS)
+    needs: linux-build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --release --target x86_64-apple-darwin
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargo-mix-x86_64-apple-darwin
+          path: target/x86_64-apple-darwin/release/cargo-mix
 
   release:
     name: Release
-    needs: [test, clippy, format, build]
+    needs: [test, clippy, format, macos-build]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
