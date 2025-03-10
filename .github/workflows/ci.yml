@@ -16,7 +16,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Set CARGO_HTTP_MULTIPLEXING
@@ -33,7 +33,7 @@ jobs:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -47,7 +47,7 @@ jobs:
     name: Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -59,7 +59,7 @@ jobs:
     name: Build (Windows)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -79,7 +79,7 @@ jobs:
     needs: windows-build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -98,57 +98,13 @@ jobs:
           name: cargo-mix-x86_64-unknown-linux-gnu
           path: target/x86_64-unknown-linux-gnu/release/cargo-mix
 
-  macos-build:
-    name: Build (macOS)
-    needs: linux-build
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: x86_64-apple-darwin
-      - name: Setup OpenSSL for cross-compilation
-        run: |
-          # Install OpenSSL with universal binary support 
-          brew uninstall --ignore-dependencies openssl@3
-          brew install openssl@3 --universal
-          
-          # Find the actual path to openssl (different based on Apple silicon vs Intel)
-          if [[ -d "/usr/local/opt/openssl@3" ]]; then
-            # Intel Mac
-            OPENSSL_ROOT="/usr/local/opt/openssl@3"
-          else
-            # Apple Silicon Mac
-            OPENSSL_ROOT="/opt/homebrew/opt/openssl@3"
-          fi
-          
-          echo "OPENSSL_DIR=$OPENSSL_ROOT" >> $GITHUB_ENV
-          echo "OPENSSL_ROOT_DIR=$OPENSSL_ROOT" >> $GITHUB_ENV
-          echo "OPENSSL_INCLUDE_DIR=$OPENSSL_ROOT/include" >> $GITHUB_ENV
-          echo "OPENSSL_LIB_DIR=$OPENSSL_ROOT/lib" >> $GITHUB_ENV
-          echo "CFLAGS=-arch x86_64" >> $GITHUB_ENV
-          echo "CXXFLAGS=-arch x86_64" >> $GITHUB_ENV
-          echo "LDFLAGS=-arch x86_64" >> $GITHUB_ENV
-      - name: Cache dependencies
-        uses: Swatinem/rust-cache@v2
-      - name: Build
-        run: |
-          # Make sure we're explicitly targeting x86_64 and using the right compiler flags
-          MACOSX_DEPLOYMENT_TARGET=10.13 cargo build --release --target x86_64-apple-darwin
-      - name: Upload binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: cargo-mix-x86_64-apple-darwin
-          path: target/x86_64-apple-darwin/release/cargo-mix
-
   release:
     name: Release
-    needs: [test, clippy, format, macos-build]
+    needs: [test, clippy, format, linux-build]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download all artifacts
         uses: actions/download-artifact@v4
       - name: Create Release
@@ -158,7 +114,6 @@ jobs:
           files: |
             cargo-mix-x86_64-unknown-linux-gnu/cargo-mix
             cargo-mix-x86_64-pc-windows-msvc/cargo-mix.exe
-            cargo-mix-x86_64-apple-darwin/cargo-mix
           draft: false
           prerelease: false
           generate_release_notes: true
