@@ -134,9 +134,10 @@ fn format_markdown(repo: &PackedRepository) -> String {
                 output.push_str(&file.extension);
             }
             
-            output.push_str("\n");
+            output.push('\n');
             output.push_str(&file.content);
-            output.push_str("\n```\n\n");
+            output.push('\n');
+            output.push_str("```\n\n");
         }
     }
     

@@ -207,11 +207,9 @@ pub fn scan_repository(base_path: &Path, config: &Config) -> Result<Vec<FileInfo
         let path = entry.path();
         
         // Skip target/ and .git/ directories completely
-        if path.ends_with("target") || path.ends_with(".git") {
-            if entry.file_type().map_or(false, |ft| ft.is_dir()) {
-                debug!("Ignoring directory: {}", path.display());
-                return false;
-            }
+        if (path.ends_with("target") || path.ends_with(".git")) && entry.file_type().is_some_and(|ft| ft.is_dir()) {
+            debug!("Ignoring directory: {}", path.display());
+            return false;
         }
         
         true
@@ -234,7 +232,7 @@ pub fn scan_repository(base_path: &Path, config: &Config) -> Result<Vec<FileInfo
             let path = entry.path();
             
             // Skip if not a regular file
-            if !entry.file_type().map_or(false, |ft| ft.is_file()) {
+            if !entry.file_type().is_some_and(|ft| ft.is_file()) {
                 return false;
             }
             

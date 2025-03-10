@@ -1,4 +1,3 @@
-
 /// Removes comments from source code based on file extension
 pub fn remove_comments(content: &str, file_extension: &str) -> String {
     match file_extension {
@@ -42,8 +41,8 @@ fn remove_python_comments(content: &str) -> String {
     let mut in_multiline_string = false;
     let mut multiline_quotes = "";
     
-    let mut lines = content.lines();
-    while let Some(line) = lines.next() {
+    let lines = content.lines();
+    for line in lines {
         let line_trim = line.trim();
         
         // Handle multi-line strings (which could contain # that aren't comments)
@@ -126,11 +125,7 @@ fn remove_c_style_comments(content: &str) -> String {
                         }
                         result.push(c);
                     } else if c == '\'' && !in_string {
-                        if !in_char {
-                            in_char = true;
-                        } else {
-                            in_char = false;
-                        }
+                        in_char = !in_char;
                         result.push(c);
                     } else {
                         result.push(c);
