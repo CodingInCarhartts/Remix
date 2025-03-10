@@ -8,6 +8,7 @@ use std::collections::HashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tree_magic_mini as tree_magic;
+use indicatif::{ProgressBar, ProgressStyle};
 
 #[derive(Debug, Clone)]
 pub struct FileInfo {
@@ -150,6 +151,15 @@ pub fn should_ignore_common(path: &Path) -> bool {
 pub fn scan_repository(base_path: &Path, config: &Config) -> Result<Vec<FileInfo>> {
     info!("Scanning repository at {}", base_path.display());
     
+    // Create a progress bar for scanning
+    let spinner = ProgressBar::new_spinner();
+    spinner.set_style(
+        ProgressStyle::default_spinner()
+            .template("{spinner:.green} {msg}")
+            .unwrap()
+    );
+    spinner.set_message("Scanning repository files...");
+    
     // Initialize the ignore system with the appropriate layers
     let should_ignore = |path: &Path| -> bool {
         // First check common patterns that should always be ignored
@@ -225,8 +235,12 @@ pub fn scan_repository(base_path: &Path, config: &Config) -> Result<Vec<FileInfo
     }
     
     // Filter files using our multi-layered ignore system
+    spinner.set_message("Collecting files...");
     let mut files: Vec<PathBuf> = walker.build()
-        .filter_map(|entry| entry.ok())
+        .filter_map(|entry| {
+            spinner.tick();
+            entry.ok()
+        })
         .filter(|entry| {
             let path = entry.path();
             
@@ -243,7 +257,7 @@ pub fn scan_repository(base_path: &Path, config: &Config) -> Result<Vec<FileInfo
     
     // Apply include patterns if specified
     if !config.include.is_empty() {
-        debug!("Applying include patterns: {:?}", config.include);
+        spinner.set_message(format!("Applying include patterns: {:?}", config.include));
         
         let mut included_files = HashSet::new();
         let options = MatchOptions {
@@ -276,6 +290,8 @@ pub fn scan_repository(base_path: &Path, config: &Config) -> Result<Vec<FileInfo
         }
     }
     
+    spinner.set_message("Processing file information...");
+    
     // Process file information in parallel
     let file_infos: Vec<FileInfo> = files.par_iter()
         .filter_map(|path| {
@@ -300,6 +316,7 @@ pub fn scan_repository(base_path: &Path, config: &Config) -> Result<Vec<FileInfo
         })
         .collect();
     
+    spinner.finish_with_message(format!("Found {} files to process", file_infos.len()));
     info!("Found {} files to process", file_infos.len());
     
     Ok(file_infos)

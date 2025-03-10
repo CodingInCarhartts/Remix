@@ -14,6 +14,8 @@ use cli::Cli;
 use env_logger::Env;
 use log::info;
 use std::path::PathBuf;
+use indicatif::{ProgressBar, ProgressStyle};
+use console::style;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -33,7 +35,19 @@ async fn main() -> Result<()> {
         Cli::parse()
     };
     
+    // Display welcome message with spinner
+    let main_spinner = ProgressBar::new_spinner();
+    main_spinner.set_style(
+        ProgressStyle::default_spinner()
+            .template("{spinner:.cyan} {wide_msg}")
+            .unwrap()
+    );
+    
+    main_spinner.set_message(format!("🚀 {} starting...", style("cargo-mix").bold().green()));
+    main_spinner.tick();
+    
     // Load configuration
+    main_spinner.set_message("Loading configuration...");
     let config = if let Some(ref config_path) = cli.config {
         config::load_config(config_path)
             .context(format!("Failed to load config from {}", config_path.display()))?
@@ -43,7 +57,9 @@ async fn main() -> Result<()> {
     
     // If --init flag is set, create a new configuration file and exit
     if cli.init {
+        main_spinner.set_message("Initializing configuration...");
         config::init_config()?;
+        main_spinner.finish_with_message(format!("{} Configuration initialized successfully", style("✓").bold().green()));
         return Ok(());
     }
     
@@ -54,34 +70,43 @@ async fn main() -> Result<()> {
         std::env::current_dir()?
     };
     
+    main_spinner.set_message(format!("Starting cargo-mix on {}", style(target_path.display()).cyan()));
+    
     info!("Starting cargo-mix on {}", target_path.display());
     
     // If processing a remote repository
     if let Some(remote_url) = &cli.remote {
         let branch = cli.remote_branch.as_ref().map_or_else(|| "main".to_string(), |s| s.clone());
+        main_spinner.set_message(format!("Processing remote repository: {} ({})", style(remote_url).cyan(), style(&branch).cyan()));
         info!("Processing remote repository: {} ({})", remote_url, branch);
         
         let temp_dir = remote::clone_repository(remote_url, &branch)
             .context("Failed to clone remote repository")?;
         
+        main_spinner.set_message("Processing repository...");
         let result = packer::pack_repository(
             &temp_dir, 
             &config.merge_with_cli(&cli),
         ).await?;
         
+        main_spinner.set_message("Formatting output...");
         formatter::output_result(&result, &config.output)?;
     } else {
         // Process local repository
+        main_spinner.set_message(format!("Processing local repository: {}", style(target_path.display()).cyan()));
         info!("Processing local repository: {}", target_path.display());
         
+        main_spinner.set_message("Processing repository...");
         let result = packer::pack_repository(
             &target_path, 
             &config.merge_with_cli(&cli),
         ).await?;
         
+        main_spinner.set_message("Formatting output...");
         formatter::output_result(&result, &config.output)?;
     }
     
+    main_spinner.finish_with_message(format!("{} Repository packing completed successfully", style("✓").bold().green()));
     info!("Repository packing completed successfully");
     Ok(())
 }

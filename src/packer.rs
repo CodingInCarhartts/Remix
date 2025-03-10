@@ -8,6 +8,8 @@ use rayon::prelude::*;
 use serde::Serialize;
 use std::fs;
 use std::path::{Path, PathBuf};
+use indicatif::{ProgressBar, ProgressStyle, MultiProgress};
+use std::sync::{Arc, Mutex};
 
 #[derive(Debug, Serialize, Clone)]
 pub struct FileContent {
@@ -39,8 +41,21 @@ pub struct RepositorySummary {
 pub async fn pack_repository(path: &Path, config: &Config) -> Result<PackedRepository> {
     info!("Packing repository at {}", path.display());
     
+    // Create a multi-progress bar for tracking multiple processes
+    let multi_progress = MultiProgress::new();
+    
     // Scan the repository to find all files
+    let scan_progress = multi_progress.add(ProgressBar::new_spinner());
+    scan_progress.set_style(
+        ProgressStyle::default_spinner()
+            .template("{spinner:.blue} {prefix:.bold.dim} {msg}")
+            .unwrap()
+    );
+    scan_progress.set_prefix("[Scan]");
+    scan_progress.set_message("Scanning repository...");
+    
     let files = scan_repository(path, config)?;
+    scan_progress.finish_with_message(format!("Found {} files", files.len()));
     
     debug!("Found {} files to process", files.len());
     
@@ -50,36 +65,78 @@ pub async fn pack_repository(path: &Path, config: &Config) -> Result<PackedRepos
         .map(|file| file.relative_path.to_string_lossy().to_string())
         .collect();
     
+    // Create a progress bar for processing files
+    let process_progress = multi_progress.add(ProgressBar::new(files.len() as u64));
+    process_progress.set_style(
+        ProgressStyle::default_bar()
+            .template("{spinner:.green} {prefix:.bold.dim} [{bar:40.cyan/blue}] {pos}/{len} files {msg}")
+            .unwrap()
+            .progress_chars("=> ")
+    );
+    process_progress.set_prefix("[Process]");
+    process_progress.set_message("Processing files...");
+    
+    // We need to wrap the progress bar in an Arc<Mutex<>> for thread-safe access
+    let progress = Arc::new(Mutex::new(process_progress));
+    
     // Process files in parallel
     let file_contents: Vec<FileContent> = files.par_iter()
         .filter_map(|file| {
-            match read_file_content(file, config) {
+            let result = match read_file_content(file, config) {
                 Ok(Some(content)) => Some(content),
                 Ok(None) => None,
                 Err(e) => {
                     warn!("Error reading file {}: {}", file.path.display(), e);
                     None
                 }
+            };
+            
+            // Update the progress bar
+            if let Ok(pb) = progress.lock() {
+                pb.inc(1);
+                if let Some(content) = &result {
+                    pb.set_message(format!("Processed {}", content.relative_path));
+                }
             }
+            
+            result
         })
         .collect();
+    
+    // Finish the progress bar
+    if let Ok(pb) = progress.lock() {
+        pb.finish_with_message(format!("Processed {} files", file_contents.len()));
+    }
     
     info!("Processed {} files", file_contents.len());
     
     // Perform security check if enabled
+    let security_progress = multi_progress.add(ProgressBar::new_spinner());
+    security_progress.set_style(
+        ProgressStyle::default_spinner()
+            .template("{spinner:.yellow} {prefix:.bold.dim} {msg}")
+            .unwrap()
+    );
+    security_progress.set_prefix("[Security]");
+    
     let suspicious_files = if !config.security.enable_security_check {
+        security_progress.finish_with_message("Security check disabled");
         None
     } else {
+        security_progress.set_message("Performing security check...");
         match security::perform_security_check(path) {
             Ok(files) => {
                 if !files.is_empty() {
+                    security_progress.finish_with_message(format!("Found {} suspicious files", files.len()));
                     info!("Found {} suspicious files that may contain sensitive information", files.len());
                     Some(files)
                 } else {
+                    security_progress.finish_with_message("No suspicious files found");
                     None
                 }
             },
             Err(e) => {
+                security_progress.finish_with_message(format!("Security check failed: {}", e));
                 warn!("Security check failed: {}", e);
                 None
             }
