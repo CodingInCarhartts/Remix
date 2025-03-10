@@ -1,5 +1,4 @@
 use cargo_mix::config::{Config, OutputConfig};
-use std::path::PathBuf;
 
 #[test]
 fn test_default_config() {

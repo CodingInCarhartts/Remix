@@ -5,7 +5,7 @@ use tempfile::tempdir;
 #[test]
 fn test_check_sensitive_content() {
     // Test strings with sensitive information based on actual keywords
-    let sensitive_content = vec![
+    let sensitive_content = [
         "const API_KEY = 'abc123'",
         "const JWT_SECRET = 'secret123'",
         "AWS_SECRET_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE",

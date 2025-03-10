@@ -1,29 +1,31 @@
 use cargo_mix::config::Config;
-use cargo_mix::packer;
-use std::path::Path;
+use cargo_mix::packer::pack_repository;
 
 // Import the common test module
 mod common;
 
 #[tokio::test]
 async fn test_pack_repository_basic() {
-    // Use the common test repo function instead of our local setup
+    // Create a test repository
     let test_dir = common::create_test_repo();
+    
+    // Create a basic config
     let config = Config::default();
     
     // Pack the repository
-    let result = packer::pack_repository(test_dir.path(), &config)
+    let result = pack_repository(test_dir.path(), &config)
         .await
         .expect("Failed to pack repository");
+    
+    // Basic assertions about the result
+    assert!(!result.files.is_empty(), "No files were packed");
+    assert!(result.summary.file_count > 0, "File count should be > 0");
+    assert!(result.summary.total_size > 0, "Total size should be > 0");
     
     // Print debug info
     println!("File count: {}", result.summary.file_count);
     println!("Directory count: {}", result.summary.directory_count);
     println!("Files found: {:?}", result.files.iter().map(|f| &f.relative_path).collect::<Vec<_>>());
-    
-    // Assertions - more relaxed to accommodate different ignore patterns
-    assert!(result.summary.file_count > 0, "Expected at least one file to be packed");
-    assert!(result.summary.total_size > 0, "Expected total size to be greater than 0");
     
     // Check if important files are included - use more flexible matching
     let file_paths: Vec<String> = result.files.iter()

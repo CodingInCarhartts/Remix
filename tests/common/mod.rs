@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use tempfile::TempDir;
 
 /// Create a temporary directory with test files for testing
@@ -72,7 +72,8 @@ module.exports = {
     dir
 }
 
-/// Get a relative path string from a base directory and a path
+/// Get the relative path from the base to the given path
+#[allow(dead_code)]
 pub fn get_relative_path(base: &Path, path: &Path) -> String {
     path.strip_prefix(base)
         .unwrap_or(path)

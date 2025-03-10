@@ -8,7 +8,6 @@ use std::collections::HashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tree_magic_mini as tree_magic;
-use glob_match;
 
 #[derive(Debug, Clone)]
 pub struct FileInfo {
