@@ -156,9 +156,12 @@ impl Default for Config {
                 use_mixignore: default_use_mixignore(),
                 custom_patterns: vec![
                     "node_modules/".to_string(),
+                    "package-lock.json".to_string(),
+                    "**/package-lock.json".to_string(),
                     "**/node_modules/".to_string(),
+                    "**/bun.lockb".to_string(),
+                    "bun.lockb".to_string(),
                     "bun.lock".to_string(),
-                    "**/bun.lock".to_string(),
                     ".conda/".to_string(),
                     "**/.conda/".to_string(),
                     ".venv/".to_string(),
