@@ -25,7 +25,7 @@
 
 Remix prepares your codebase for AI analysis by packing it into a single file. Perfect for feeding your code to Large Language Models (LLMs) like Claude, ChatGPT, DeepSeek, Perplexity, Gemini, and more.
 
-<div align="center">
+
  ```mermaid
 flowchart TD
     A[CLI Execution] --> B[Parse Command Line Arguments]
@@ -84,6 +84,7 @@ flowchart TD
     HH -->|No| JJ[Workflow Complete]
     II --> JJ
 ```
+<div align="center">
 <p align="center"><i>A visualization of how Remix processes your repository</i></p>
   <p><i>A visualization of how Remix processes your repository</i></p>
 </div>
