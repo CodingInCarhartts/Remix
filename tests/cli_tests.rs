@@ -1,4 +1,4 @@
-use cargo_mix::cli::Cli;
+use remix::cli::Cli;
 use clap::Parser;
 
 #[test]

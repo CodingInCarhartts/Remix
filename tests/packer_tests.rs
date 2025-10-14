@@ -1,5 +1,5 @@
-use cargo_mix::config::Config;
-use cargo_mix::packer::pack_repository;
+use remix::config::Config;
+use remix::packer::pack_repository;
 
 // Import the common test module
 mod common;

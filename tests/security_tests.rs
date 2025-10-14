@@ -1,4 +1,4 @@
-use cargo_mix::security;
+use remix::security;
 use std::fs;
 use tempfile::tempdir;
 

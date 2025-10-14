@@ -1,4 +1,4 @@
-use cargo_mix::utils;
+use remix::utils;
 
 #[test]
 fn test_format_size_bytes() {

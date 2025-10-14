@@ -1,4 +1,4 @@
-use cargo_mix::config::{Config, OutputConfig};
+use remix::config::{Config, OutputConfig};
 
 #[test]
 fn test_default_config() {
