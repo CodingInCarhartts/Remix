@@ -43,7 +43,7 @@ async fn main() -> Result<()> {
             .unwrap()
     );
     
-    main_spinner.set_message(format!("🚀 {} starting...", style("cargo-mix").bold().green()));
+    main_spinner.set_message(format!("🚀 {} starting...", style("remix").bold().green()));
     main_spinner.tick();
     
     // Load configuration
@@ -70,9 +70,9 @@ async fn main() -> Result<()> {
         std::env::current_dir()?
     };
     
-    main_spinner.set_message(format!("Starting cargo-mix on {}", style(target_path.display()).cyan()));
+    main_spinner.set_message(format!("Starting remix on {}", style(target_path.display()).cyan()));
     
-    info!("Starting cargo-mix on {}", target_path.display());
+    info!("Starting remix on {}", target_path.display());
     
     // If processing a remote repository
     if let Some(remote_url) = &cli.remote {

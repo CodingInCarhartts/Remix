@@ -159,37 +159,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
 
 [[package]]
-name = "cargo-mix"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "assert_fs",
- "clap",
- "console",
- "crossbeam",
- "env_logger",
- "git2",
- "glob",
- "glob-match",
- "ignore",
- "indicatif",
- "log",
- "mockall",
- "predicates",
- "rayon",
- "regex",
- "reqwest",
- "serde",
- "serde_json",
- "tempfile",
- "test-case",
- "thiserror",
- "tokio",
- "tree_magic_mini",
- "walkdir",
-]
-
-[[package]]
 name = "cc"
 version = "1.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1341,6 +1310,37 @@ name = "regex-syntax"
 version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
+
+[[package]]
+name = "remix"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "assert_fs",
+ "clap",
+ "console",
+ "crossbeam",
+ "env_logger",
+ "git2",
+ "glob",
+ "glob-match",
+ "ignore",
+ "indicatif",
+ "log",
+ "mockall",
+ "predicates",
+ "rayon",
+ "regex",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "test-case",
+ "thiserror",
+ "tokio",
+ "tree_magic_mini",
+ "walkdir",
+]
 
 [[package]]
 name = "reqwest"

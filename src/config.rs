@@ -6,7 +6,7 @@ use std::fs;
 use std::io::Write;
 use std::path::Path;
 
-const CONFIG_FILENAME: &str = "cargo-mix.config.json";
+const CONFIG_FILENAME: &str = "remix.config.json";
 const DEFAULT_MAX_FILE_SIZE: u64 = 100_000; // 100KB
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -36,7 +36,7 @@ fn default_format() -> String {
 }
 
 fn default_output_path() -> String {
-    "./cargo-mix-output.md".to_string()
+    "./remix-output.md".to_string()
 }
 
 impl Default for OutputConfig {
@@ -61,7 +61,7 @@ pub struct IgnoreConfig {
     #[serde(default = "default_use_default_patterns")]
     pub use_default_patterns: bool,
     
-    /// Use patterns from .cargo-mixignore file if present
+    /// Use patterns from .remixignore file if present
     #[serde(default = "default_use_mixignore")]
     pub use_mixignore: bool,
     

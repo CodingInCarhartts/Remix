@@ -53,11 +53,11 @@ impl FileInfo {
     }
 }
 
-/// Read a .cargo-mixignore file if it exists
+/// Read a .remixignore file if it exists
 fn read_mixignore(base_path: &Path) -> Option<Gitignore> {
-    let mixignore_path = base_path.join(".cargo-mixignore");
+    let mixignore_path = base_path.join(".remixignore");
     if mixignore_path.exists() {
-        debug!("Found .cargo-mixignore file");
+        debug!("Found .remixignore file");
         let mut builder = GitignoreBuilder::new(base_path);
         if builder.add_line(None, &fs::read_to_string(mixignore_path).unwrap_or_default()).is_ok() {
             return builder.build().ok();
@@ -183,12 +183,12 @@ pub fn scan_repository(base_path: &Path, config: &Config) -> Result<Vec<FileInfo
             }
         }
         
-        // Layer 2: .cargo-mixignore file
+        // Layer 2: .remixignore file
         if config.ignore.use_mixignore {
             if let Some(ref mixignore) = read_mixignore(base_path) {
                 let result = mixignore.matched_path_or_any_parents(relative_path, false);
                 if result.is_ignore() {
-                    debug!("Ignoring '{}' due to .cargo-mixignore", path_str);
+                    debug!("Ignoring '{}' due to .remixignore", path_str);
                     return true;
                 }
             }

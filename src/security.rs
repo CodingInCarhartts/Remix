@@ -1,9 +1,31 @@
 use anyhow::Result;
 use log::{debug, info};
+use serde::Serialize;
 use std::path::Path;
 use std::collections::HashSet;
 use std::fs;
 use crate::scanner::should_ignore_common;
+use crate::packer::{FileContent, RepositorySummary};
+
+
+#[derive(Debug, Serialize, Clone)]
+pub struct PackedRepository {
+    pub files: Vec<FileContent>,
+    pub summary: RepositorySummary,
+    pub instruction: Option<String>,
+    pub suspicious_files: Option<Vec<String>>,
+    pub security_check_status: SecurityCheckStatus, // Add this
+    pub binary_files: Option<Vec<String>>,
+}
+
+#[derive(Debug, Serialize, Clone)]
+pub enum SecurityCheckStatus {
+    Disabled,
+    CompletedNoFindings,
+    CompletedWithFindings,
+    Failed(String),
+}
+
 
 /// Performs a security check on a repository to identify potentially sensitive files
 pub fn perform_security_check(path: &Path) -> Result<Vec<String>> {

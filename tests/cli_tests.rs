@@ -4,7 +4,7 @@ use clap::Parser;
 #[test]
 fn test_cli_parsing() {
     // Test basic CLI parsing
-    let cli = Cli::parse_from(["cargo-mix", "path/to/repo"]);
+    let cli = Cli::parse_from(["remix", "path/to/repo"]);
     assert_eq!(cli.path, Some("path/to/repo".to_string()));
     assert!(cli.config.is_none());
     assert!(!cli.init);
@@ -19,7 +19,7 @@ fn test_cli_parsing() {
 fn test_cli_include_ignore_patterns() {
     // Test include patterns parsing
     let cli = Cli::parse_from([
-        "cargo-mix", 
+        "remix", 
         "--include", "*.rs,*.md", 
         "--ignore", "target/,node_modules/"
     ]);
@@ -40,7 +40,7 @@ fn test_cli_include_ignore_patterns() {
 fn test_cli_remote_repo() {
     // Test remote repository options
     let cli = Cli::parse_from([
-        "cargo-mix", 
+        "remix", 
         "--remote", "username/repo", 
         "--remote-branch", "main"
     ]);

@@ -15,7 +15,7 @@ pub fn create_test_repo() -> TempDir {
     fs::write(
         dir.path().join("src/main.rs"),
         r#"fn main() {
-    println!("Hello, cargo-mix!");
+    println!("Hello, remix!");
 }
 "#
     ).expect("Failed to write main.rs");
@@ -25,7 +25,7 @@ pub fn create_test_repo() -> TempDir {
         dir.path().join("README.md"),
         r#"# Test Repository
 
-This is a test repository for cargo-mix testing.
+This is a test repository for remix testing.
 
 ## Features
 

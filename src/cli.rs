@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 #[command(
-    name = "cargo-mix",
+    name = "remix",
     about = "Pack your repository into a single file for AI tools",
     version,
     author,

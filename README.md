@@ -1,8 +1,8 @@
 <div align="center">
-  
-# 🚀 Cargo Mix
 
-[![Crates.io](https://img.shields.io/crates/v/cargo-mix)](https://crates.io/crates/cargo-mix)
+# 🚀 Remix
+
+[![Crates.io](https://img.shields.io/crates/v/remix.svg)](https://crates.io/crates/remix)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust](https://img.shields.io/badge/rust-stable-brightgreen.svg)](https://www.rust-lang.org/)
 
@@ -10,10 +10,11 @@
 
 *Pack your entire repository into a single, AI-friendly file*
 
-[Installation](#-installation) • 
-[Usage](#-usage) • 
-[Configuration](#-configuration) • 
-[Features](#-features) • 
+[Installation](#-installation) •
+[Usage](#-usage) •
+[Configuration](#-configuration) •
+[Features](#-features) •
+[Examples](#-examples) •
 [License](#-license)
 
 </div>
@@ -22,11 +23,69 @@
 
 ## 📖 Overview
 
-Cargo Mix prepares your codebase for AI analysis by packing it into a single file. Perfect for feeding your code to Large Language Models (LLMs) like Claude, ChatGPT, DeepSeek, Perplexity, Gemini, and more.
+Remix prepares your codebase for AI analysis by packing it into a single file. Perfect for feeding your code to Large Language Models (LLMs) like Claude, ChatGPT, DeepSeek, Perplexity, Gemini, and more.
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x400?text=Cargo+Mix+Diagram" alt="Cargo Mix workflow diagram" width="600"/>
-  <p><i>A visualization of how Cargo Mix processes your repository</i></p>
+  flowchart TD
+    A[CLI Execution] --> B[Parse Command Line Arguments]
+    B --> C[Load Configuration]
+    C --> D{Remote Repository?}
+    
+    D -->|Yes| E[Parse Remote URL]
+    E --> F[Clone Repository to Temp Directory]
+    F --> G[Checkout Target Branch/Commit]
+    
+    D -->|No| H[Use Local Directory Path]
+    
+    G --> I[Scan Repository]
+    H --> I
+    
+    I --> J[Apply Include/Ignore Filters]
+    J --> K[Multi-layer Filtering]
+    K --> L[File Size Check]
+    L --> M[Binary File Detection]
+    
+    M --> N[Parallel File Processing]
+    N --> O[Read File Content]
+    O --> P{Security Check Enabled?}
+    P -->|Yes| Q[Check for Sensitive Content]
+    P -->|No| R[Skip Security Check]
+    
+    Q --> S[Filter Sensitive Files]
+    R --> T[Process File Content]
+    S --> T
+    
+    T --> U{Compression Mode?}
+    U -->|Yes| V[Compress Content]
+    U -->|No| W{Comment Removal?}
+    
+    V --> X[Format Output]
+    W -->|Yes| Y[Remove Comments]
+    W -->|No| X
+    
+    Y --> X
+    
+    X --> Z[Generate Repository Summary]
+    Z --> AA[Format Output File]
+    AA --> BB{Markdown Format}
+    AA --> CC{JSON Format}
+    AA --> DD{Text Format}
+    
+    BB --> EE[Write Markdown File]
+    CC --> FF[Write JSON File]
+    DD --> GG[Write Text File]
+    
+    EE --> HH{Open File?}
+    FF --> HH
+    GG --> HH
+    
+    HH -->|Yes| II[Open Output File]
+    HH -->|No| JJ[Workflow Complete]
+    II --> JJ
+    
+    style A fill:#e1f5fe
+    style JJ fill:#c8e6c9
+  <p><i>A visualization of how Remix processes your repository</i></p>
 </div>
 
 ## ✨ Features
@@ -34,26 +93,35 @@ Cargo Mix prepares your codebase for AI analysis by packing it into a single fil
 | Feature | Description |
 |---------|-------------|
 | ⚡ **High Performance** | Built in Rust for maximum speed and efficiency |
-| 💻 **Local Repositories** | Pack your entire local repository or specific directories |
-| 🌐 **Remote Repositories** | Directly pack GitHub repositories with branch/tag/commit support |
-| 🎯 **Intelligent File Selection** | Include/exclude files using glob patterns |
-| 🛡️ **Multi-layered Ignore System** | Uses `.gitignore`, `.cargo-mixignore`, and custom ignore patterns |
-| 💬 **Comment Processing** | Option to remove or keep code comments to reduce token count |
-| 🔒 **Security Checks** | Detection of sensitive information like API keys and credentials |
-| 🎨 **Format Customization** | Control the output format for specific AI tools |
+| 📁 **Repository Packing** | Combine your entire codebase into a single file |
+| 🌐 **Remote Repository Support** | Process GitHub repositories directly with branch/tag/commit support |
+| 🎯 **Intelligent Filtering** | Include/exclude files using glob patterns |
+| 🛡️ **Multi-layered Ignore System** | Uses `.gitignore`, `.mixignore`, and custom ignore patterns |
+| 🔒 **Security Checks** | Automatically detect and warn about sensitive information |
+| 📝 **Multiple Output Formats** | Markdown, JSON, and plain text support |
+| 🧹 **Comment Removal** | Optionally strip comments from source code to reduce token count |
+| ⚙️ **Flexible Configuration** | JSON-based config files with CLI overrides |
+| 🎨 **AI Tool Optimized** | Formatted output designed for LLM consumption |
 
 ## 📦 Installation
 
-**Via Cargo:**
+**From Crates.io:**
 ```bash
-cargo install cargo-mix
+cargo install remix
 ```
 
 **From Source:**
 ```bash
-git clone https://github.com/dotZeroSlash/cargo-mix
-cd cargo-mix
-cargo install --path .
+git clone https://github.com/dotZeroSlash/remix.git
+cd remix
+cargo build --release
+# Binary will be available at target/release/remix
+```
+
+**As a Cargo Subcommand:**
+```bash
+cargo install --features cargo-subcommand remix
+# Then use as: cargo mix [options]
 ```
 
 ## 🔧 Usage
@@ -62,12 +130,17 @@ cargo install --path .
 
 Pack your entire repository:
 ```bash
-cargo mix
+remix
 ```
 
 Pack a specific directory:
 ```bash
-cargo mix path/to/directory
+remix /path/to/your/project
+```
+
+Pack a remote repository:
+```bash
+remix --remote https://github.com/username/repo
 ```
 
 ### Advanced Options
@@ -77,10 +150,15 @@ cargo mix path/to/directory
 
 ```bash
 # Include specific files or directories using glob patterns
-cargo mix --include "src/**/*.rs,**/*.md"
+remix --include "*.rs,*.toml"
+remix --include "src/**/*.rs,tests/**/*.rs"
 
 # Exclude specific files or directories
-cargo mix --ignore "**/*.log,target/"
+remix --ignore "*.log,*.tmp"
+remix --ignore "node_modules/**,target/**"
+
+# Set maximum file size (in bytes)
+remix --max-file-size 50000
 ```
 </details>
 
@@ -89,15 +167,16 @@ cargo mix --ignore "**/*.log,target/"
 
 ```bash
 # Pack a remote repository (full URL)
-cargo mix --remote https://github.com/username/repo
+remix --remote https://github.com/microsoft/vscode
 
-# Using GitHub shorthand
-cargo mix --remote username/repo
+# Pack a specific branch
+remix --remote https://github.com/user/repo --remote-branch develop
 
-# Specify branch, tag, or commit hash
-cargo mix --remote username/repo --remote-branch main
-cargo mix --remote https://github.com/username/repo/tree/branch-name
-cargo mix --remote https://github.com/username/repo/commit/commit-hash
+# Pack a specific tag
+remix --remote https://github.com/user/repo --remote-branch v1.2.3
+
+# Using GitLab
+remix --remote https://gitlab.com/example/project
 ```
 </details>
 
@@ -105,51 +184,151 @@ cargo mix --remote https://github.com/username/repo/commit/commit-hash
 <summary>⚙️ <b>Processing Options</b></summary>
 
 ```bash
-# Process comments in code
-cargo mix --remove-comments
+# Remove comments from code
+remix --remove-comments
 
-# Control security checks
-cargo mix --disable-security-checks
+# Skip security checks (use with caution)
+remix --skip-sensitive-check
 
 # Compress the output
-cargo mix --compress
+remix --compress
+
+# Add custom instructions for AI
+remix --instruction "Please analyze this Rust codebase"
+
+# Use instruction file
+remix --instruction-file ./context.txt
 
 # Initialize a new configuration file
-cargo mix --init
+remix --init
+```
+</details>
+
+<details>
+<summary>📄 <b>Output Options</b></summary>
+
+```bash
+# Specify output path
+remix --output ./my-repo.md
+
+# Change output format (md, json, txt)
+remix --format json
+
+# Open output file after generation
+remix --open
 ```
 </details>
 
 ## 📝 Configuration
 
-Create a `cargo-mix.config.json` file in your project root for custom configurations:
+Create a `remix.config.json` file in your project root for custom configurations:
 
 ```json
 {
-  "include": ["**/*.rs", "**/*.md"],
-  "ignore": ["target/", "node_modules/", "**/*.log"],
-  "maxFileSize": 1000000,
-  "compress": true,
-  "removeComments": false,
-  "enableSecurityChecks": true,
+  "include": [],
+  "ignore": {
+    "use_gitignore": true,
+    "use_default_patterns": true,
+    "use_mixignore": true,
+    "custom_patterns": []
+  },
+  "max_file_size": 100000,
+  "compress": false,
+  "security": {
+    "enable_security_check": true
+  },
   "output": {
-    "format": "markdown",
-    "openFile": true,
-    "path": "./output.md"
+    "format": "md",
+    "open_file": false,
+    "path": "./remix-output.md",
+    "instruction_file_path": null,
+    "remove_comments": false
+  },
+  "instruction": null
+}
+```
+
+### Configuration Examples
+
+**Basic configuration with custom includes:**
+
+```json
+{
+  "include": ["src/**/*.rs", "Cargo.toml", "README.md"],
+  "output": {
+    "path": "./my-project.md"
   }
+}
+```
+
+**Configuration for a Node.js project:**
+
+```json
+{
+  "include": ["src/**/*.js", "package.json", "README.md"],
+  "ignore": {
+    "custom_patterns": ["node_modules/**", "*.log"]
+  },
+  "output": {
+    "format": "md",
+    "remove_comments": true
+  }
+}
+```
+
+**Configuration for AI analysis:**
+
+```json
+{
+  "include": ["src/**/*.py", "requirements.txt", "docs/**"],
+  "max_file_size": 50000,
+  "output": {
+    "format": "md",
+    "instruction_file_path": "./ai-instructions.txt"
+  },
+  "instruction": "Please analyze this Python codebase for security vulnerabilities"
 }
 ```
 
 ## 🚫 Ignore Files
 
-Cargo Mix uses a multi-layered ignore system:
+Remix uses a multi-layered ignore system:
 
 1. **`.gitignore`** - Standard Git ignore patterns are respected
-2. **`.cargo-mixignore`** - Project-specific ignore patterns for Cargo Mix
+2. **`.mixignore`** - Project-specific ignore patterns for Remix
 3. **Command line `--ignore` patterns** or configuration file settings
+4. **Default patterns** - Common files and directories (node_modules, target, etc.)
 
-A default `.cargo-mixignore` file contains sensible defaults for common files and directories that should be excluded from AI processing.
+You can disable any of these layers using command-line options:
+- `--no-gitignore` - Don't use .gitignore patterns
+- `--no-default-patterns` - Don't use default ignore patterns
 
-## 📊 Examples
+## 📊 Output Formats
+
+### Markdown (Default)
+
+Generates a well-formatted markdown file with:
+- File tree structure
+- Syntax-highlighted code blocks
+- File metadata (size, path)
+- Instructions and context at the top
+
+### JSON
+
+Structured JSON output containing:
+- Repository metadata
+- File contents as base64-encoded strings
+- File information (path, size, type)
+- Configuration used
+
+### Text
+
+Plain text output with:
+- Simple file headers
+- Raw code content
+- Minimal formatting
+
+## 💡 Examples
 
 <div align="center">
   <table>
@@ -165,6 +344,78 @@ A default `.cargo-mixignore` file contains sensible defaults for common files an
     </tr>
   </table>
 </div>
+
+### Basic Usage Examples
+
+**Pack the current directory:**
+```bash
+remix
+```
+
+**Pack a specific project:**
+```bash
+remix ~/projects/my-app
+```
+
+**Include only Rust files:**
+```bash
+remix --include "*.rs"
+```
+
+### AI Tool Preparation
+
+**Add instructions for AI analysis:**
+```bash
+remix --instruction "Please review this codebase for security issues" --output ./security-review.md
+```
+
+**Use instruction file:**
+```bash
+echo "Analyze the following Rust code for performance optimizations:" > instructions.txt
+remix --instruction-file ./instructions.txt --include "*.rs"
+```
+
+### Advanced Filtering
+
+**Process only small files:**
+```bash
+remix --max-file-size 10000
+```
+
+**Exclude build artifacts:**
+```bash
+remix --ignore "target/**,*.log"
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+**"No files found" error:**
+- Check your include patterns
+- Verify the path exists and contains files
+- Try `--no-default-patterns` if files are being excluded
+
+**Large output files:**
+- Use `--max-file-size` to limit file sizes
+- Add more ignore patterns with `--ignore`
+- Use `--compress` to reduce output size
+
+**Permission denied:**
+- Ensure you have read access to the target directory
+- For remote repos, ensure the repository is public or you have access
+
+**Configuration not loading:**
+- Verify the JSON syntax is valid
+- Check the config file path
+- Use `--init` to create a new config file
+
+### Performance Tips
+
+- Use specific include patterns instead of processing entire directories
+- Exclude large directories like `node_modules`, `target`, etc.
+- Use `--compress` for smaller output files
+- For large repositories, consider using `--max-file-size`
 
 ## 🤝 Contributing
 
@@ -185,7 +436,7 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 <div align="center">
   <p>Built with ❤️ by the Rust community</p>
   <p>
-    <a href="https://github.com/dotZeroSlash/cargo-mix/issues">Report Bug</a> •
-    <a href="https://github.com/dotZeroSlash/cargo-mix/issues">Request Feature</a>
+    <a href="https://github.com/dotZeroSlash/remix/issues">Report Bug</a> •
+    <a href="https://github.com/dotZeroSlash/remix/issues">Request Feature</a>
   </p>
-</div> 
+</div>

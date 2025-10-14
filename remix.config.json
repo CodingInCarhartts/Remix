@@ -1,0 +1,36 @@
+{
+  "include": [
+    "src/**/*.rs",
+    "Cargo.toml",
+    "README.md",
+    "tests/**/*.rs",
+    "examples/**/*.rs"
+  ],
+  "ignore": {
+    "use_gitignore": true,
+    "use_default_patterns": true,
+    "use_mixignore": true,
+    "custom_patterns": [
+      "target/debug/**",
+      "target/release/**",
+      "*.tmp",
+      "*.bak",
+      "logs/**",
+      "temp/**",
+      "cache/**"
+    ]
+  },
+  "max_file_size": 50000,
+  "compress": false,
+  "security": {
+    "enable_security_check": true
+  },
+  "output": {
+    "format": "md",
+    "open_file": false,
+    "path": "./remix-output.md",
+    "instruction_file_path": "./instructions.txt",
+    "remove_comments": true
+  },
+  "instruction": "Please analyze this Rust codebase for performance optimizations and security vulnerabilities. Focus on the core logic in src/ and ignore test files unless they demonstrate important patterns."
+}
