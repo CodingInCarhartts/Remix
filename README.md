@@ -250,7 +250,8 @@ Create a `remix.config.json` file in your project root for custom configurations
 
 ### Configuration Examples
 
-**Basic configuration with custom includes:**
+<details>
+<summary>Basic configuration with custom includes</summary>
 
 ```json
 {
@@ -260,8 +261,10 @@ Create a `remix.config.json` file in your project root for custom configurations
   }
 }
 ```
+</details>
 
-**Configuration for a Node.js project:**
+<details>
+<summary>Configuration for a Node.js project</summary>
 
 ```json
 {
@@ -275,8 +278,10 @@ Create a `remix.config.json` file in your project root for custom configurations
   }
 }
 ```
+</details>
 
-**Configuration for AI analysis:**
+<details>
+<summary>Configuration for AI analysis</summary>
 
 ```json
 {
@@ -289,6 +294,7 @@ Create a `remix.config.json` file in your project root for custom configurations
   "instruction": "Please analyze this Python codebase for security vulnerabilities"
 }
 ```
+</details>
 
 ## 🚫 Ignore Files
 
