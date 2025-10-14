@@ -89,7 +89,7 @@ pub async fn pack_repository(path: &Path, config: &Config) -> Result<PackedRepos
         .filter_map(|file| {
             let result = match read_file_content(file, config) {
                 Ok(Some(content)) => Some(content),
-                Ok(None) => None,
+                Ok(none) => none,
                 Err(e) => {
                     warn!("Error reading file {}: {}", file.path.display(), e);
                     None
@@ -178,7 +178,7 @@ pub async fn pack_repository(path: &Path, config: &Config) -> Result<PackedRepos
                 config.instruction.clone()
             }
         }
-        None => config.instruction.clone(),
+        _none => config.instruction.clone(),
     };
 
     Ok(PackedRepository {
@@ -186,7 +186,7 @@ pub async fn pack_repository(path: &Path, config: &Config) -> Result<PackedRepos
         summary,
         instruction,
         suspicious_files,  // Now properly tracks security check results
-        security_check_status,  // NEW: Provides detailed security status
+        security_check_status: security_status,  // Fix: use correct variable name
         binary_files: Some(binary_files),
     })
 }

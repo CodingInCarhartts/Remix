@@ -1,4 +1,3 @@
-use crate::packer::{FileContent, RepositorySummary};
 use crate::scanner::should_ignore_common;
 use anyhow::Result;
 use log::{debug, info};
@@ -6,16 +5,6 @@ use serde::Serialize;
 use std::collections::HashSet;
 use std::fs;
 use std::path::Path;
-
-#[derive(Debug, Serialize, Clone)]
-pub struct PackedRepository {
-    pub files: Vec<FileContent>,
-    pub summary: RepositorySummary,
-    pub instruction: Option<String>,
-    pub suspicious_files: Option<Vec<String>>,
-    pub security_check_status: SecurityCheckStatus, // Add this
-    pub binary_files: Option<Vec<String>>,
-}
 
 #[derive(Debug, Serialize, Clone)]
 pub enum SecurityCheckStatus {

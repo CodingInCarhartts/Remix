@@ -6,6 +6,7 @@ use log::{info, warn};
 use std::fs;
 use std::io::Write;
 use std::path::Path;
+use crate::security::SecurityCheckStatus;
 
 pub fn output_result(repo: &PackedRepository, config: &OutputConfig) -> Result<()> {
     let output_path = &config.path;
@@ -75,34 +76,32 @@ fn format_markdown(repo: &PackedRepository) -> String {
     }
 
     // Add security check results if available
-    if let Some(status) = &repo.security_check_status {
-        match status {
-            crate::packer::SecurityCheckStatus::Disabled => {
-                output.push_str("## Security Check\n\n");
-                output.push_str("🔒 **Security check was disabled**\n");
-            }
-            crate::packer::SecurityCheckStatus::CompletedNoFindings => {
-                output.push_str("## Security Check\n\n");
-                output.push_str("✅ **Security check completed - no suspicious files found**\n");
-            }
-            crate::packer::SecurityCheckStatus::CompletedWithFindings => {
-                output.push_str("\n## Security Check Results\n\n");
-                output.push_str(&format!(
-                    "⚠️ **{} suspicious file(s) detected that may contain sensitive information:**\n\n",
-                    repo.suspicious_files.as_ref().map_or(0, |v| v.len())
-                ));
+    match &repo.security_check_status {
+        SecurityCheckStatus::Disabled => {
+            output.push_str("## Security Check\n\n");
+            output.push_str("🔒 **Security check was disabled**\n");
+        }
+        SecurityCheckStatus::CompletedNoFindings => {
+            output.push_str("## Security Check\n\n");
+            output.push_str("✅ **Security check completed - no suspicious files found**\n");
+        }
+        SecurityCheckStatus::CompletedWithFindings => {
+            output.push_str("\n## Security Check Results\n\n");
+            output.push_str(&format!(
+                "⚠️ **{} suspicious file(s) detected that may contain sensitive information:**\n\n",
+                repo.suspicious_files.as_ref().map_or(0, |v| v.len())
+            ));
 
-                for (i, file) in repo.suspicious_files.as_ref().unwrap_or(&vec![]).iter().enumerate() {
-                    output.push_str(&format!("{}. `{}`\n", i + 1, file));
-                }
+            for (i, file) in repo.suspicious_files.as_ref().unwrap_or(&vec![]).iter().enumerate() {
+                output.push_str(&format!("{}. `{}`\n", i + 1, file));
+            }
 
-                output
-                    .push_str("\n> **Note:** Please review these files before sharing this output.\n");
-            }
-            crate::packer::SecurityCheckStatus::Failed(error) => {
-                output.push_str("## Security Check\n\n");
-                output.push_str(&format!("❌ **Security check failed**: {}\n", error));
-            }
+            output
+                .push_str("\n> **Note:** Please review these files before sharing this output.\n");
+        }
+        SecurityCheckStatus::Failed(error) => {
+            output.push_str("## Security Check\n\n");
+            output.push_str(&format!("❌ **Security check failed**: {}\n", error));
         }
     }
 
@@ -212,31 +211,29 @@ fn format_text(repo: &PackedRepository) -> String {
     }
 
     // Add security check results if available
-    if let Some(status) = &repo.security_check_status {
-        match status {
-            crate::packer::SecurityCheckStatus::Disabled => {
-                output.push_str("SECURITY CHECK:\n\n");
-                output.push_str("Security check was disabled.\n\n");
-            }
-            crate::packer::SecurityCheckStatus::CompletedNoFindings => {
-                output.push_str("SECURITY CHECK:\n\n");
-                output.push_str("Security check completed - no suspicious files found.\n\n");
-            }
-            crate::packer::SecurityCheckStatus::CompletedWithFindings => {
-                output.push_str("SECURITY CHECK:\n\n");
-                output.push_str("WARNING: ");
-                output.push_str(&format!("{} suspicious file(s) detected that may contain sensitive information:\n\n", repo.suspicious_files.as_ref().map_or(0, |v| v.len())));
+    match &repo.security_check_status {
+        SecurityCheckStatus::Disabled => {
+            output.push_str("SECURITY CHECK:\n\n");
+            output.push_str("Security check was disabled.\n\n");
+        }
+        SecurityCheckStatus::CompletedNoFindings => {
+            output.push_str("SECURITY CHECK:\n\n");
+            output.push_str("Security check completed - no suspicious files found.\n\n");
+        }
+        SecurityCheckStatus::CompletedWithFindings => {
+            output.push_str("SECURITY CHECK:\n\n");
+            output.push_str("WARNING: ");
+            output.push_str(&format!("{} suspicious file(s) detected that may contain sensitive information:\n\n", repo.suspicious_files.as_ref().map_or(0, |v| v.len())));
 
-                for (i, file) in repo.suspicious_files.as_ref().unwrap_or(&vec![]).iter().enumerate() {
-                    output.push_str(&format!("{}. {}\n", i + 1, file));
-                }
+            for (i, file) in repo.suspicious_files.as_ref().unwrap_or(&vec![]).iter().enumerate() {
+                output.push_str(&format!("{}. {}\n", i + 1, file));
+            }
 
-                output.push_str("\nPlease review these files before sharing this output.\n");
-            }
-            crate::packer::SecurityCheckStatus::Failed(error) => {
-                output.push_str("SECURITY CHECK:\n\n");
-                output.push_str(&format!("Security check failed: {}\n", error));
-            }
+            output.push_str("\nPlease review these files before sharing this output.\n");
+        }
+        SecurityCheckStatus::Failed(error) => {
+            output.push_str("SECURITY CHECK:\n\n");
+            output.push_str(&format!("Security check failed: {}\n", error));
         }
     }
 
