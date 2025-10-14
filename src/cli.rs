@@ -6,7 +6,7 @@ use std::path::PathBuf;
     name = "remix",
     about = "Pack your repository into a single file for AI tools",
     version,
-    author,
+    author
 )]
 pub struct Cli {
     /// Path to the directory to process
@@ -102,4 +102,4 @@ impl Cli {
     pub fn ignore_patterns(&self) -> Option<Vec<String>> {
         self.parse_comma_separated(&self.ignore)
     }
-} 
+}

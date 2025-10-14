@@ -328,23 +328,6 @@ Plain text output with:
 - Raw code content
 - Minimal formatting
 
-## 💡 Examples
-
-<div align="center">
-  <table>
-    <tr>
-      <td align="center">
-        <b>Input Repository</b><br>
-        <img src="https://via.placeholder.com/300x200?text=Repository+Structure" alt="Repository structure" width="300"/>
-      </td>
-      <td align="center">
-        <b>Output for AI</b><br>
-        <img src="https://via.placeholder.com/300x200?text=AI+Friendly+Output" alt="AI-friendly output" width="300"/>
-      </td>
-    </tr>
-  </table>
-</div>
-
 ### Basic Usage Examples
 
 **Pack the current directory:**
@@ -434,7 +417,7 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 ---
 
 <div align="center">
-  <p>Built with ❤️ by the Rust community</p>
+  <p>Built with ❤️ by dotZeroSlash of the Rust community</p>
   <p>
     <a href="https://github.com/dotZeroSlash/remix/issues">Report Bug</a> •
     <a href="https://github.com/dotZeroSlash/remix/issues">Request Feature</a>

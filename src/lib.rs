@@ -6,4 +6,4 @@ pub mod packer;
 pub mod remote;
 pub mod scanner;
 pub mod security;
-pub mod utils; 
+pub mod utils;
