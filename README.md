@@ -85,7 +85,6 @@ flowchart TD
     II --> JJ
 ```
 <div align="center">
-<p align="center"><i>A visualization of how Remix processes your repository</i></p>
   <p><i>A visualization of how Remix processes your repository</i></p>
 </div>
 
