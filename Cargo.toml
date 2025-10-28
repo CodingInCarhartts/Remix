@@ -6,7 +6,7 @@ authors = ["Trenton Sousa tdsousa1993@gmail.com"]
 description = "A Rust implementation of repomix - pack repositories for AI tools"
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/dotZeroSlash/remix"
+repository = "https://github.com/CodingInCarhartts/remix"
 keywords = ["ai", "repository", "packing", "llm"]
 
 [dependencies]

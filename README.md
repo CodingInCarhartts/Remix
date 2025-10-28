@@ -112,7 +112,7 @@ cargo install remix
 
 **From Source:**
 ```bash
-git clone https://github.com/dotZeroSlash/remix.git
+git clone https://github.com/CodingInCarhartts/remix.git
 cd remix
 cargo build --release
 # Binary will be available at target/release/remix
@@ -423,9 +423,9 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 ---
 
 <div align="center">
-  <p>Built with ❤️ by dotZeroSlash of the Rust community</p>
+  <p>Built with ❤️ by CodingInCarhartts of the Rust community</p>
   <p>
-    <a href="https://github.com/dotZeroSlash/remix/issues">Report Bug</a> •
-    <a href="https://github.com/dotZeroSlash/remix/issues">Request Feature</a>
+    <a href="https://github.com/CodingInCarhartts/remix/issues">Report Bug</a> •
+    <a href="https://github.com/CodingInCarhartts/remix/issues">Request Feature</a>
   </p>
 </div>
