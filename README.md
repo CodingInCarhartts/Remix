@@ -98,7 +98,7 @@ flowchart TD
 | 🎯 **Intelligent Filtering** | Include/exclude files using glob patterns |
 | 🛡️ **Multi-layered Ignore System** | Uses `.gitignore`, `.mixignore`, and custom ignore patterns |
 | 🔒 **Security Checks** | Automatically detect and warn about sensitive information |
-| 📝 **Multiple Output Formats** | Markdown, JSON, and plain text support |
+| 📝 **Multiple Output Formats** | Markdown, JSON, plain text, and TOON support |
 | 🧹 **Comment Removal** | Optionally strip comments from source code to reduce token count |
 | ⚙️ **Flexible Configuration** | JSON-based config files with CLI overrides |
 | 🎨 **AI Tool Optimized** | Formatted output designed for LLM consumption |
@@ -211,8 +211,8 @@ remix --init
 # Specify output path
 remix --output ./my-repo.md
 
-# Change output format (md, json, txt)
-remix --format json
+# Change output format (md, json, txt, toon)
+remix --format toon
 
 # Open output file after generation
 remix --open
@@ -326,6 +326,14 @@ Structured JSON output containing:
 - File contents as base64-encoded strings
 - File information (path, size, type)
 - Configuration used
+
+### TOON
+
+Token-efficient output using the TOON format:
+- Compact representation optimized for LLM prompts
+- 30-60% fewer tokens than JSON for structured data
+- Human-readable with indentation-based structure
+- Ideal for AI analysis workflows
 
 ### Text
 

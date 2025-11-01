@@ -82,3 +82,66 @@ fn test_perform_security_check() {
         "Security check should detect at least one suspicious file"
     );
 }
+
+#[test]
+fn test_check_sensitive_content_edge_cases() {
+    // Test various formats and edge cases
+    let sensitive_cases = vec![
+        "const API_KEY = 'abc123'",  // api_key keyword
+        "secret_key: mySecret",  // secret_key keyword
+        "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC\n-----END PRIVATE KEY-----",  // private key
+        "password= mySecretPass123!",  // password=
+        "mongodb://username:password@localhost:27017",  // mongodb://
+    ];
+
+    let safe_cases = vec![
+        "const version = '1.2.3'",  // Version string
+        "log.debug('API called with key: test_key')",  // Test key in log
+        "const example = 'sk_test_example_from_docs'",  // Example from docs
+        "README.md contains sk_test_123",  // In documentation
+    ];
+
+    for case in sensitive_cases {
+        assert!(
+            security::check_sensitive_content(case),
+            "Should detect sensitive content: {}",
+            case
+        );
+    }
+
+    for case in safe_cases {
+        assert!(
+            !security::check_sensitive_content(case),
+            "Should not flag safe content: {}",
+            case
+        );
+    }
+}
+
+#[test]
+fn test_perform_security_check_empty_directory() {
+    let dir = tempdir().expect("Failed to create temporary directory");
+
+    let result = security::perform_security_check(dir.path());
+    assert!(result.is_ok());
+
+    let suspicious_files = result.unwrap();
+    assert!(suspicious_files.is_empty(), "Empty directory should have no suspicious files");
+}
+
+#[test]
+fn test_perform_security_check_binary_file() {
+    let dir = tempdir().expect("Failed to create temporary directory");
+
+    // Create a binary file with sensitive-looking content
+    let binary_path = dir.path().join("binary.dat");
+    let binary_content = b"\x00\x01\x02sk_test_1234567890\x03\x04\x05";
+    fs::write(&binary_path, binary_content).expect("Failed to write binary file");
+
+    let result = security::perform_security_check(dir.path());
+    assert!(result.is_ok());
+
+    let suspicious_files = result.unwrap();
+    // Binary files are not checked for sensitive content
+    assert!(suspicious_files.is_empty(), "Binary files should not be checked for sensitive content");
+}

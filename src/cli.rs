@@ -37,8 +37,8 @@ pub struct Cli {
     #[arg(short, long)]
     pub output: Option<PathBuf>,
 
-    /// Output format (md, json, txt)
-    #[arg(long, value_parser = ["md", "markdown", "json", "txt", "text"])]
+    /// Output format (md, json, txt, toon)
+    #[arg(long, value_parser = ["md", "markdown", "json", "txt", "text", "toon"])]
     pub format: Option<String>,
 
     /// Compress the code output
