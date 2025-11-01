@@ -11,7 +11,7 @@ const DEFAULT_MAX_FILE_SIZE: u64 = 100_000; // 100KB
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct OutputConfig {
-    /// Output format (md, json, txt)
+    /// Output format (md, json, txt, toon)
     #[serde(default = "default_format")]
     pub format: String,
 

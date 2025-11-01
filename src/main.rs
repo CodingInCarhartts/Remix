@@ -101,10 +101,11 @@ async fn main() -> Result<()> {
             .context("Failed to clone remote repository")?;
 
         main_spinner.set_message("Processing repository...");
-        let result = packer::pack_repository(&temp_dir, &config.merge_with_cli(&cli)).await?;
+        let merged_config = config.merge_with_cli(&cli);
+        let result = packer::pack_repository(&temp_dir, &merged_config).await?;
 
         main_spinner.set_message("Formatting output...");
-        formatter::output_result(&result, &config.output)?;
+        formatter::output_result(&result, &merged_config.output)?;
     } else {
         // Process local repository
         main_spinner.set_message(format!(
@@ -114,10 +115,11 @@ async fn main() -> Result<()> {
         info!("Processing local repository: {}", target_path.display());
 
         main_spinner.set_message("Processing repository...");
-        let result = packer::pack_repository(&target_path, &config.merge_with_cli(&cli)).await?;
+        let merged_config = config.merge_with_cli(&cli);
+        let result = packer::pack_repository(&target_path, &merged_config).await?;
 
         main_spinner.set_message("Formatting output...");
-        formatter::output_result(&result, &config.output)?;
+        formatter::output_result(&result, &merged_config.output)?;
     }
 
     main_spinner.finish_with_message(format!(

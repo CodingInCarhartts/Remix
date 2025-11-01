@@ -7,6 +7,7 @@ use std::fs;
 use std::io::Write;
 use std::path::Path;
 use crate::security::SecurityCheckStatus;
+use rtoon;
 
 pub fn output_result(repo: &PackedRepository, config: &OutputConfig) -> Result<()> {
     let output_path = &config.path;
@@ -18,6 +19,7 @@ pub fn output_result(repo: &PackedRepository, config: &OutputConfig) -> Result<(
         "md" | "markdown" => format_markdown(repo),
         "json" => format_json(repo)?,
         "txt" | "text" => format_text(repo),
+        "toon" => format_toon(repo)?,
         _ => {
             warn!("Unknown format '{}', defaulting to markdown", format);
             format_markdown(repo)
@@ -42,7 +44,7 @@ pub fn output_result(repo: &PackedRepository, config: &OutputConfig) -> Result<(
     Ok(())
 }
 
-fn format_markdown(repo: &PackedRepository) -> String {
+pub fn format_markdown(repo: &PackedRepository) -> String {
     let mut output = String::new();
 
     // Add user instruction if provided
@@ -176,11 +178,16 @@ fn format_markdown(repo: &PackedRepository) -> String {
     output
 }
 
-fn format_json(repo: &PackedRepository) -> Result<String> {
+pub fn format_json(repo: &PackedRepository) -> Result<String> {
     serde_json::to_string_pretty(repo).context("Failed to serialize repository to JSON")
 }
 
-fn format_text(repo: &PackedRepository) -> String {
+pub fn format_toon(repo: &PackedRepository) -> Result<String> {
+    let value = serde_json::to_value(repo).context("Failed to convert repository to JSON value")?;
+    rtoon::encode_default(&value).context("Failed to encode repository to TOON")
+}
+
+pub fn format_text(repo: &PackedRepository) -> String {
     let mut output = String::new();
 
     // Add user instruction if provided
