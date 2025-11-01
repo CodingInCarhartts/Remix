@@ -7,7 +7,6 @@ use std::fs;
 use std::io::Write;
 use std::path::Path;
 use crate::security::SecurityCheckStatus;
-use rtoon;
 
 pub fn output_result(repo: &PackedRepository, config: &OutputConfig) -> Result<()> {
     let output_path = &config.path;
