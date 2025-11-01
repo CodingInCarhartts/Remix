@@ -68,8 +68,10 @@ async fn test_pack_repository_basic() {
 async fn test_pack_repository_with_include_patterns() {
     let test_dir = common::create_test_repo();
 
-    let mut config = Config::default();
-    config.include = vec!["**/*.rs".to_string(), "**/*.md".to_string()];
+    let config = Config {
+        include: vec!["**/*.rs".to_string(), "**/*.md".to_string()],
+        ..Default::default()
+    };
 
     let result = pack_repository(test_dir.path(), &config).await.unwrap();
 
@@ -113,8 +115,10 @@ async fn test_pack_repository_file_size_limit() {
     let large_content = "x".repeat(2000); // 2000 bytes
     std::fs::write(test_dir.path().join("large.txt"), large_content).unwrap();
 
-    let mut config = Config::default();
-    config.max_file_size = 1000; // 1000 bytes limit
+    let config = Config {
+        max_file_size: 1000, // 1000 bytes limit
+        ..Default::default()
+    };
 
     let result = pack_repository(test_dir.path(), &config).await.unwrap();
 
