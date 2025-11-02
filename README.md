@@ -240,7 +240,7 @@ Create a `remix.config.json` file in your project root for custom configurations
   "output": {
     "format": "md",
     "open_file": false,
-    "path": "./remix-output.md",
+    "path": "./remix-output.txt",
     "instruction_file_path": null,
     "remove_comments": false
   },

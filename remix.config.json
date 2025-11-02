@@ -26,9 +26,9 @@
     "enable_security_check": true
   },
   "output": {
-    "format": "md",
+    "format": "txt",
     "open_file": false,
-    "path": "./remix-output.md",
+    "path": "./remix-output.txt",
     "instruction_file_path": "./instructions.txt",
     "remove_comments": true
   },

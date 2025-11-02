@@ -13,18 +13,18 @@ fn test_default_config() {
     assert_eq!(config.max_file_size, 100_000); // 100KB
     assert!(!config.compress);
     assert!(config.security.enable_security_check);
-    assert_eq!(config.output.format, "md");
+    assert_eq!(config.output.format, "txt");
     assert!(!config.output.open_file);
-    assert_eq!(config.output.path, "./remix-output.md");
+    assert_eq!(config.output.path, "./remix-output.txt");
 }
 
 #[test]
 fn test_output_config_default() {
     let output_config = OutputConfig::default();
 
-    assert_eq!(output_config.format, "md");
+    assert_eq!(output_config.format, "txt");
     assert!(!output_config.open_file);
-    assert_eq!(output_config.path, "./remix-output.md");
+    assert_eq!(output_config.path, "./remix-output.txt");
     assert!(output_config.instruction_file_path.is_none());
     assert!(!output_config.remove_comments);
 }

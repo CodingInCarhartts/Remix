@@ -7,11 +7,11 @@ use std::path::PathBuf;
     about = "Pack your repository into a single file for AI tools",
     long_about = "Remix packs your repository into a single file optimized for AI tools like ChatGPT, Claude, or GitHub Copilot.\n\n\
 EXAMPLES:\n\
-  remix                          # Pack current directory to remix-output.md\n\
+  remix                          # Pack current directory to remix-output.txt\n\
   remix src/ --format json       # Pack src/ directory to remix-output.json\n\
   remix --remote https://github.com/user/repo  # Pack remote repository\n\
   remix --include \"*.rs,*.toml\"   # Only include Rust and TOML files\n\
-  remix --output my-repo.md      # Custom output filename\n\
+  remix --output my-repo.txt     # Custom output filename\n\
   remix --format toon --compress # Use TOON format with compression",
     version,
     author

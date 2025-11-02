@@ -32,11 +32,11 @@ pub struct OutputConfig {
 }
 
 fn default_format() -> String {
-    "md".to_string()
+    "txt".to_string()
 }
 
 fn default_output_path() -> String {
-    "./remix-output.md".to_string()
+    "./remix-output.txt".to_string()
 }
 
 impl Default for OutputConfig {
