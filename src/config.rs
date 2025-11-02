@@ -4,7 +4,7 @@ use log::{info, warn};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 const CONFIG_FILENAME: &str = "remix.config.json";
 const DEFAULT_MAX_FILE_SIZE: u64 = 100_000; // 100KB
@@ -246,6 +246,20 @@ impl Config {
 
         if let Some(format) = &cli.format {
             config.output.format = format.clone();
+        }
+
+        // Adjust output path extension based on format if no custom output path provided
+        if cli.output.is_none() {
+            let extension = match config.output.format.as_str() {
+                "md" | "markdown" => "md",
+                "json" => "json",
+                "txt" | "text" => "txt",
+                "toon" => "toon",
+                _ => "md",
+            };
+            let path_buf = PathBuf::from(&config.output.path);
+            let new_path = path_buf.with_extension(extension);
+            config.output.path = new_path.to_string_lossy().to_string();
         }
 
         if let Some(output_path) = &cli.output {
